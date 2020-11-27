@@ -1,6 +1,6 @@
 on:
   push:
-  branch: [master]
+  branch: [main]
 
 name: Transition To Staging
 
