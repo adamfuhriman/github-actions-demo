@@ -1,0 +1,33 @@
+on:
+  push:
+  branch: [master]
+
+name: Transition To Staging
+
+jobs:
+  transition-issue:
+    name: transition to staging
+    runs-on: windows_latest
+    steps:
+
+#Login to Jira API
+    - name: Login
+      uses: atlassian/gajira-login@master
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+        #Search for an issue key in commit message, branch name, etc. 
+#This issue key is then saved and used by the next actions in the same workflow
+
+    - name: Find Issue Key
+      uses: ./
+      with:
+        from: branch
+
+    - name: Transition issue
+      uses: atlassian/gajira-transition@master
+      with:
+        issue: ${{ steps.create.outputs.issue }}
+        transition: "Staging QC"
